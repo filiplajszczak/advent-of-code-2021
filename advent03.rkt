@@ -12,7 +12,7 @@
   (string->number (list->string (list* #\# #\b lst))))
 
 (define (filter-values lst num pos)
-  (filter (lambda (element) (eq? (list-ref element pos) num)) lst))
+  (filter (λ (element) (eq? (list-ref element pos) num)) lst))
 
 (define (flip-bit bit) (match bit [#\0 #\1] [#\1 #\0]))
 
