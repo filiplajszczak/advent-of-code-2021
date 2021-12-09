@@ -17,7 +17,7 @@
   (map (λ (line) (map (λ (part) (map string->set part)) (map string-split line))) input))
 
 (define (digit-from-length patterns len)
-  (car (filter (λ (x) (equal? (set-count x) len)) patterns)))
+  (findf (λ (x) (equal? (set-count x) len)) patterns))
 
 (define (set-count-equal? st n)
   (equal? (set-count st) n))
@@ -26,26 +26,26 @@
   (set-count-equal? (set-subtract base mask)  reminder-count))
 
 (define (get-six patterns seven)
-  (car (filter (λ (x) (and (set-count-equal? x 6)
-                           (fits? x seven 4))) patterns)))
+  (findf (λ (x) (and (set-count-equal? x 6)
+                           (fits? x seven 4))) patterns))
 (define (get-nine patterns six four)
-  (car (filter (λ (x) (and (set-count-equal? x 6)
+  (findf (λ (x) (and (set-count-equal? x 6)
                            (not (set=? six x))
-                           (equal? (set-count (set-subtract x four)) 2))) patterns)))
+                           (equal? (set-count (set-subtract x four)) 2))) patterns))
 
 (define (get-zero patterns nine six)
-  (car (filter (λ (x) (and (set-count-equal? x 6)
+  (findf (λ (x) (and (set-count-equal? x 6)
                            (not (set=? nine x))
-                           (not (set=? six x)))) patterns)))
+                           (not (set=? six x)))) patterns))
 
 (define (get-five patterns six)
-  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x six 0))) patterns)))
+  (findf (λ (x) (and (set-count-equal? x 5) (fits? x six 0))) patterns))
 
 (define (get-three patterns seven)
-  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x seven 2))) patterns)))
+  (findf (λ (x) (and (set-count-equal? x 5) (fits? x seven 2))) patterns))
 
 (define (get-two patterns nine)
-  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x nine 1))) patterns)))
+  (findf (λ (x) (and (set-count-equal? x 5) (fits? x nine 1))) patterns))
 
 (define (line->number line)
   (let* ([patterns (car line)]
