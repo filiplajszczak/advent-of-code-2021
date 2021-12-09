@@ -2,7 +2,7 @@
 (require algorithms)
 
 (define input
-  (map (λ (x) (string-split x "|")) (file->lines "day08e.in")))
+  (map (λ (x) (string-split x "|")) (file->lines "day08.in")))
 
 (define (input1 input)
   (append* (map string-split (map cadr input))))
@@ -16,37 +16,36 @@
 (define (input2 input)
   (map (λ (line) (map (λ (part) (map string->set part)) (map string-split line))) input))
 
-;(define (sort-letters str)
-;  (list->string (sort (string->list str) char<?)))
-
 (define (digit-from-length patterns len)
   (car (filter (λ (x) (equal? (set-count x) len)) patterns)))
 
-(define (get-six patterns seven)
-  (car (filter (λ (x) (and (equal? (set-count x) 6)
-                           (equal? (set-count (set-subtract x seven)) 4))) patterns)))
+(define (set-count-equal? st n)
+  (equal? (set-count st) n))
 
+(define (fits? base mask reminder-count)
+  (equal? (set-count (set-subtract base mask)) reminder-count))
+
+(define (get-six patterns seven)
+  (car (filter (λ (x) (and (set-count-equal? x 6)
+                           (fits? x seven 4))) patterns)))
 (define (get-nine patterns six four)
-  (car (filter (λ (x) (and (equal? (set-count x) 6)
+  (car (filter (λ (x) (and (set-count-equal? x 6)
                            (not (set=? six x))
                            (equal? (set-count (set-subtract x four)) 2))) patterns)))
 
 (define (get-zero patterns nine six)
-  (car (filter (λ (x) (and (equal? (set-count x) 6)
+  (car (filter (λ (x) (and (set-count-equal? x 6)
                            (not (set=? nine x))
                            (not (set=? six x)))) patterns)))
 
 (define (get-five patterns six)
-  (car (filter (λ (x) (and (equal? (set-count x) 5)
-                           (equal? (set-count (set-subtract x six)) 0))) patterns)))
+  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x six 0))) patterns)))
 
 (define (get-three patterns seven)
-  (car (filter (λ (x) (and (equal? (set-count x) 5)
-                           (equal? (set-count (set-subtract x seven)) 2))) patterns)))
+  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x seven 2))) patterns)))
 
 (define (get-two patterns nine)
-  (car (filter (λ (x) (and (equal? (set-count x) 5)
-                           (equal? (set-count (set-subtract x nine)) 1))) patterns)))
+  (car (filter (λ (x) (and (set-count-equal? x 5) (fits? x nine 1))) patterns)))
 
 (define (line->number line)
   (let* ([patterns (car line)]
