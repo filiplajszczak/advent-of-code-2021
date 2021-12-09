@@ -8,7 +8,7 @@
   (append* (map string-split (map cadr input))))
 
 (define (solution1 input)
-  (length (filter (λ (x) (member (string-length x) '(2 3 4 7))) (input1 input))))
+  (count (λ (x) (member (string-length x) '(2 3 4 7))) (input1 input)))
 
 (define (string->set str)
   (list->set (string->list str)))
@@ -23,7 +23,7 @@
   (equal? (set-count st) n))
 
 (define (fits? base mask reminder-count)
-  (equal? (set-count (set-subtract base mask)) reminder-count))
+  (set-count-equal? (set-subtract base mask)  reminder-count))
 
 (define (get-six patterns seven)
   (car (filter (λ (x) (and (set-count-equal? x 6)
