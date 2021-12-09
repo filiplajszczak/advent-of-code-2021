@@ -10,53 +10,47 @@
 (define (solution1 input)
   (length (filter (λ (x) (member (string-length x) '(2 3 4 7))) (input1 input))))
 
-(define (input2 input)
-  (map (λ (x) (map string-split x)) input))
-
-(define (sort-letters str)
-  (list->string (sort (string->list str) char<?)))
-
-(define (digit-from-length patterns len)
-  (car (filter (λ (x) (equal? (string-length x) len)) patterns)))
-
 (define (string->set str)
   (list->set (string->list str)))
 
-(define (get-a seven one)
-  (car (set->list (set-subtract (string->set seven) (string->set one)))))
+(define (input2 input)
+  (map (λ (line) (map (λ (part) (map string->set part)) (map string-split line))) input))
+
+;(define (sort-letters str)
+;  (list->string (sort (string->list str) char<?)))
+
+(define (digit-from-length patterns len)
+  (car (filter (λ (x) (equal? (set-count x) len)) patterns)))
 
 (define (get-six patterns seven)
-  (car (filter (λ (x) (and (equal? (string-length x) 6)
-                           (equal? (set-count (set-subtract (string->set x) (string->set seven))) 4))) patterns)))
+  (car (filter (λ (x) (and (equal? (set-count x) 6)
+                           (equal? (set-count (set-subtract x seven)) 4))) patterns)))
 
 (define (get-nine patterns six four)
-  (car (filter (λ (x) (and (equal? (string-length x) 6)
-                           (not (set=? (string->set six) (string->set x)))
-                           (equal? (set-count (set-subtract (string->set x) (string->set four))) 2))) patterns)))
+  (car (filter (λ (x) (and (equal? (set-count x) 6)
+                           (not (set=? six x))
+                           (equal? (set-count (set-subtract x four)) 2))) patterns)))
 
 (define (get-zero patterns nine six)
-  (car (filter (λ (x) (and (equal? (string-length x) 6)
-                           (not (set=? (string->set nine) (string->set x)))
-                           (not (set=? (string->set six) (string->set x))))) patterns)))
-
-(define (get-c six eight)
-  (car (set->list (set-subtract (string->set eight) (string->set six)))))
+  (car (filter (λ (x) (and (equal? (set-count x) 6)
+                           (not (set=? nine x))
+                           (not (set=? six x)))) patterns)))
 
 (define (get-five patterns six)
-  (car (filter (λ (x) (and (equal? (string-length x) 5)
-                           (equal? (set-count (set-subtract (string->set x) (string->set six))) 0))) patterns)))
+  (car (filter (λ (x) (and (equal? (set-count x) 5)
+                           (equal? (set-count (set-subtract x six)) 0))) patterns)))
 
 (define (get-three patterns seven)
-  (car (filter (λ (x) (and (equal? (string-length x) 5)
-                           (equal? (set-count (set-subtract (string->set x) (string->set seven))) 2))) patterns)))
+  (car (filter (λ (x) (and (equal? (set-count x) 5)
+                           (equal? (set-count (set-subtract x seven)) 2))) patterns)))
 
 (define (get-two patterns nine)
-  (car (filter (λ (x) (and (equal? (string-length x) 5)
-                           (equal? (set-count (set-subtract (string->set x) (string->set nine))) 1))) patterns)))
+  (car (filter (λ (x) (and (equal? (set-count x) 5)
+                           (equal? (set-count (set-subtract x nine)) 1))) patterns)))
 
 (define (line->number line)
-  (let* ([patterns (map sort-letters (car line))]
-         [output (map sort-letters (cadr line))]
+  (let* ([patterns (car line)]
+         [output (cadr line)]
          [eight (digit-from-length patterns 7)]
          [one (digit-from-length patterns 2)]
          [seven (digit-from-length patterns 3)]
