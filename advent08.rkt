@@ -16,11 +16,11 @@
 (define (input2 input)
   (map (λ (line) (map (λ (part) (map string->set part)) (map string-split line))) input))
 
-(define (digit-from-length patterns len)
-  (findf (λ (x) (equal? (set-count x) len)) patterns))
-
 (define (set-count-equal? st n)
   (equal? (set-count st) n))
+
+(define (digit-from-length patterns len)
+  (findf (λ (x) (set-count-equal? x len)) patterns))
 
 (define (fits? base mask reminder-count)
   (set-count-equal? (set-subtract base mask)  reminder-count))
