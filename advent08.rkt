@@ -10,8 +10,8 @@
 (define (solution1 input)
   (count (λ (x) (member (string-length x) '(2 3 4 7))) (input1 input)))
 
-(define (string->set str)
-  (list->set (string->list str)))
+(define string->set
+  (compose list->set string->list))
 
 (define (input2 input)
   (map (λ (line) (map (λ (part) (map string->set part)) (map string-split line))) input))
@@ -19,57 +19,62 @@
 (define (set-count-equal? st n)
   (equal? (set-count st) n))
 
-(define (digit-from-length patterns len)
-  (findf (λ (x) (set-count-equal? x len)) patterns))
-
 (define (fits? base mask reminder-count)
-  (set-count-equal? (set-subtract base mask)  reminder-count))
+  (set-count-equal? (set-subtract base mask) reminder-count))
 
 (define (get-six patterns seven)
-  (findf (λ (x) (and (set-count-equal? x 6)
-                           (fits? x seven 4))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 6)
+                       (fits? pat seven 4))) patterns))
+
 (define (get-nine patterns six four)
-  (findf (λ (x) (and (set-count-equal? x 6)
-                           (not (set=? six x))
-                           (equal? (set-count (set-subtract x four)) 2))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 6)
+                       (not (set=? six pat))
+                       (fits? pat four 2))) patterns))
 
 (define (get-zero patterns nine six)
-  (findf (λ (x) (and (set-count-equal? x 6)
-                           (not (set=? nine x))
-                           (not (set=? six x)))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 6)
+                       (not (set=? nine pat))
+                       (not (set=? six pat)))) patterns))
 
 (define (get-five patterns six)
-  (findf (λ (x) (and (set-count-equal? x 5) (fits? x six 0))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat six 0))) patterns))
 
 (define (get-three patterns seven)
-  (findf (λ (x) (and (set-count-equal? x 5) (fits? x seven 2))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat seven 2))) patterns))
 
 (define (get-two patterns nine)
-  (findf (λ (x) (and (set-count-equal? x 5) (fits? x nine 1))) patterns))
+  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat nine 1))) patterns))
 
 (define (line->number line)
   (let* ([patterns (car line)]
          [output (cadr line)]
-         [eight (digit-from-length patterns 7)]
-         [one (digit-from-length patterns 2)]
-         [seven (digit-from-length patterns 3)]
-         [four (digit-from-length patterns 4)]
+         [digit-from-length
+           (λ (len)
+              (findf (λ (pat)
+                        (set-count-equal? pat len))
+                     patterns))]
+         [eight (digit-from-length 7)]
+         [one (digit-from-length 2)]
+         [seven (digit-from-length 3)]
+         [four (digit-from-length 4)]
          [six (get-six patterns seven)]
          [nine (get-nine patterns six four)]
          [zero (get-zero patterns six nine)]
          [five (get-five patterns six)]
          [three (get-three patterns seven)]
          [two (get-two patterns nine)]
-         [result (λ (x) (match x [(== one) #\1]
-                                 [(== two) #\2]
-                                 [(== three) #\3]
-                                 [(== four) #\4]
-                                 [(== five) #\5]
-                                 [(== six) #\6]
-                                 [(== seven) #\7]
-                                 [(== eight) #\8]
-                                 [(== nine) #\9]
-                                 [(== zero) #\0]))])
+         [result (λ (pat)
+                    (match pat 
+                      [(== one) #\1]
+                      [(== two) #\2]
+                      [(== three) #\3]
+                      [(== four) #\4]
+                      [(== five) #\5]
+                      [(== six) #\6]
+                      [(== seven) #\7]
+                      [(== eight) #\8]
+                      [(== nine) #\9]
+                      [(== zero) #\0]))])
         (string->number (list->string (map result output)))))
 
 (define (solution2 input)
