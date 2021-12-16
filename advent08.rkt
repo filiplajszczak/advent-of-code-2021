@@ -36,14 +36,17 @@
                        (not (set=? nine pat))
                        (not (set=? six pat)))) patterns))
 
+(define (five-element-fits? mask reminder-count pat)
+  (and (set-count-equal? pat 5) (fits? pat mask reminder-count)))
+
 (define (get-five patterns six)
-  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat six 0))) patterns))
+  (findf (curry five-element-fits? six 0) patterns))
 
 (define (get-three patterns seven)
-  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat seven 2))) patterns))
+  (findf (curry five-element-fits? seven 2) patterns))
 
 (define (get-two patterns nine)
-  (findf (λ (pat) (and (set-count-equal? pat 5) (fits? pat nine 1))) patterns))
+  (findf (curry five-element-fits? nine 1) patterns))
 
 (define (line->number line)
   (let* ([patterns (car line)]
