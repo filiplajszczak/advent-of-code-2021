@@ -11,3 +11,4 @@
 (newline)
 ;; Part 2
 (display (count identity (adjacent-map (sums-of-sliding-triads input) <)))
+(newline)
