@@ -3,10 +3,9 @@
 
 
 (use-modules (srfi srfi-1)
-             ((f) #:prefix f:)
-             ((f ports) #:prefix p:))
+             (srfi srfi-64)
+             ((f) #:prefix f:))
 
-;; ported from 
 (define (zip-with proc list1 . lists)
   (apply map proc list1 lists))
 
@@ -16,14 +15,30 @@
 (define (init lst)
   (take lst (- (length lst) 1)))
 
-(define input (map string->number (f:read-lines "day01.in")))
+(define (input filename)
+  (map string->number (f:read-lines filename)))
 
 (define (sums-of-sliding-triads lst)
   (zip-with + (init (init lst)) (init (cdr lst)) (cddr lst)))
 
+(define (part-1 filename)
+  (count identity (adjacent-map (input filename) <)))
+
+(define (part-2 filename)
+  (count identity (adjacent-map (sums-of-sliding-triads (input filename)) <)))
+
 ;; Part 1
-(display (count identity (adjacent-map input <)))
+(display (part-1 "day01.in"))
 (newline)
 ;; Part 2
-(display (count identity (adjacent-map (sums-of-sliding-triads input) <)))
+(display (part-2 "day01.in"))
 (newline)
+
+;; Tests
+(test-begin "example")
+
+(test-equal "Test part 1" 7 (part-1 "day01-example.in"))
+(test-equal "Test part 2" 5 (part-2 "day01-example.in"))
+
+(test-end "example")
+
